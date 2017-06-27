@@ -27,8 +27,8 @@
 	<body>
 
 		<div id="container"></div>
-		<div id="info"><a href="http://threejs.org" target="_blank" rel="noopener">three.js</a> webgl - buffergeometry</div>
-
+		<div id="info">render : left side</div>
+		<script src="js/jquery.js"></script>
 		<script src="js/three.js"></script>
 		<script src="js/OBJLoader.js"></script>
 		<script src="js/Detector.js"></script>
@@ -46,7 +46,7 @@
 				//
 				camera = new THREE.PerspectiveCamera( 27, window.innerWidth / window.innerHeight, 1, 3500 );
 				camera.position.z = 2750;
-				scene = new THREE.Scene();
+				scene = new THREE.Scene;
 				scene.fog = new THREE.Fog( 0x050505, 2000, 3500 );
 				//
 				scene.add( new THREE.AmbientLight( 0x444444 ) );
@@ -96,26 +96,35 @@
 					//mesh.position.y = 0;
 					//mesh.position.z = 0;
 					scene.add(object);
-					mesh.scale.set(5, 5, 5);
 					mesh.geometry.computeBoundingBox();
+					mesh.scale.set(1 /((mesh.geometry.boundingBox.max.x - mesh.geometry.boundingBox.min.x)/2),
+												 1 /((mesh.geometry.boundingBox.max.y - mesh.geometry.boundingBox.min.y)/2),
+												 1 /((mesh.geometry.boundingBox.max.z - mesh.geometry.boundingBox.min.z)/2));
 					mesh.geometry.translate(-((mesh.geometry.boundingBox.max.x + mesh.geometry.boundingBox.min.x)/2) ,
                             -((mesh.geometry.boundingBox.max.y + mesh.geometry.boundingBox.min.y)/2),
                             -((mesh.geometry.boundingBox.max.z + mesh.geometry.boundingBox.min.z)/2))
 					//translate_resize_geomtry(mesh);
-					mesh.rotateY(-Math.PI/8)
+					mesh.rotateY(-Math.PI/8);
+					mesh.rotateZ(Math.PI);
+					mesh.rotateY(Math.PI);
+
+
 					console.log(object);
 				}, onProgress, onError );
 
 				//camera.lookAt(0, 0, 0);
-				camera.position.z = 2;
+				camera.position.z = 6;
 				camera.position.y = 0;
 				camera.position.x = 0;
 				//camera.rotateY(- 16 * Math.PI / 8);
 				//camera.lookAt(0, 0, 1);
 
 				//
-				renderer = new THREE.WebGLRenderer( { antialias: false } );
+				renderer = new THREE.WebGLRenderer( { antialias: false,
+					preserveDrawingBuffer   : true   // required to support .toDataURL()
+					} );
 				renderer.setClearColor( scene.fog.color );
+
 				renderer.setPixelRatio( window.devicePixelRatio );
 				renderer.setSize( window.innerWidth, window.innerHeight );
 				renderer.gammaInput = true;
@@ -144,7 +153,22 @@
 				//camera.rotateX(0.1);
 				//camera.lookAt(0, 0, 0);
 				renderer.render( scene, camera );
+				//var dataUrl = renderer.domElement.toDataURL("image/png");
+				//upload();
 			}
+
+			function upload() {
+				$.post('upload/',
+	    {
+	        id : 1,
+	        img : renderer.domElement.toDataURL("image/png")
+	    }, function(data) {
+	        console.log(data);
+	    });
+
+
+			}
+
 			function translate_resize_geomtry(geometry) {
             geometry.computeBoundingBox();
             geometry.translate(-((geometry.boundingBox.max.x + geometry.boundingBox.min.x)/2) ,

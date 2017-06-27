@@ -1,7 +1,11 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.views.static import serve
+import re
+import base64
 import os
+#from . import recog
+import subprocess
 
 def index(request, id):
     filepath = ""
@@ -22,7 +26,7 @@ def mtl(request):
     return serve(request, os.path.basename(filepath), os.path.dirname(filepath))
 
 def obj(request):
-    filepath = 'mesh/sphere.obj'
+    filepath = 'mesh/mesh2.obj'
     return serve(request, os.path.basename(filepath), os.path.dirname(filepath))
 
 def jpeg(request):
@@ -31,4 +35,16 @@ def jpeg(request):
 
 def js(request, filename):
     filepath = 'js/' + filename + '.js'
+    return serve(request, os.path.basename(filepath), os.path.dirname(filepath))
+
+def upload(request):
+    print("piou")
+    #print(request.POST.dict())
+    dataUrlPattern = re.compile('data:image/(png|jpeg);base64,(.*)$')
+    image = dataUrlPattern.match(request.POST.dict()['img']).group(2);
+    Image_bin = base64.b64decode(image)
+    with open("file.png", "wb+") as fd:
+        fd.write(Image_bin)
+        #subprocess.call("./face_landmark_detection_ex", "file.png")
+    filepath = 'mesh/mesh.jpeg'
     return serve(request, os.path.basename(filepath), os.path.dirname(filepath))
