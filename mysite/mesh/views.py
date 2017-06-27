@@ -3,8 +3,18 @@ from django.http import HttpResponse
 from django.views.static import serve
 import os
 
-def index(request):
-    filepath = 'index.html'
+def index(request, id):
+    filepath = ""
+    if(id == "0"):
+        filepath = 'front.html'
+    elif (id == "1"):
+        filepath = 'right_side.html'
+    elif(id == "2"):
+        filepath = 'left_side.html'
+    return serve(request, os.path.basename(filepath), os.path.dirname(filepath))
+
+def side(request):
+    filepath = 'side.html'
     return serve(request, os.path.basename(filepath), os.path.dirname(filepath))
 
 def mtl(request):
@@ -12,7 +22,7 @@ def mtl(request):
     return serve(request, os.path.basename(filepath), os.path.dirname(filepath))
 
 def obj(request):
-    filepath = 'mesh/mesh2.obj'
+    filepath = 'mesh/sphere.obj'
     return serve(request, os.path.basename(filepath), os.path.dirname(filepath))
 
 def jpeg(request):
