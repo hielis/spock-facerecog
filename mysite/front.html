@@ -118,6 +118,40 @@
 				camera.position.x = 0;
 				//camera.rotateY(- 16 * Math.PI / 8);
 				//camera.lookAt(0, 0, 1);
+				var loader2 = new THREE.OBJLoader( manager );
+				loader2.load( 'mesh2.obj', function ( object ) {
+
+					object.traverse( function ( child ) {
+						if ( child instanceof THREE.Mesh ) {
+							child.material.map = texture;
+						}
+					} );
+					//object.position.x = 0;
+					//object.position.y = 0;
+					//object.position.z = 0;
+					var mesh = object.children[0];
+					//var geometry = translate_resize_geomtry(mesh.geometry);
+
+										//object.rotateY( Math.PI / 2);
+					//scene.add( object );
+					//mesh.position.x = 0;
+					//mesh.position.y = 0;
+					//mesh.position.z = 0;
+					scene.add(object);
+					mesh.geometry.computeBoundingBox();
+					mesh.scale.set(1 /((mesh.geometry.boundingBox.max.x - mesh.geometry.boundingBox.min.x)/2),
+												 1 /((mesh.geometry.boundingBox.max.y - mesh.geometry.boundingBox.min.y)/2),
+												 1 /((mesh.geometry.boundingBox.max.z - mesh.geometry.boundingBox.min.z)/2));
+					mesh.geometry.translate(-((mesh.geometry.boundingBox.max.x + mesh.geometry.boundingBox.min.x)/2) ,
+                            -((mesh.geometry.boundingBox.max.y + mesh.geometry.boundingBox.min.y)/2),
+                            -((mesh.geometry.boundingBox.max.z + mesh.geometry.boundingBox.min.z)/2));
+					mesh.position.set(0, 0, 0);
+					mesh.rotateZ(Math.PI);
+					mesh.rotateY(Math.PI);
+					//translate_resize_geomtry(mesh);
+					//mesh.rotateY(Math.PI)
+					console.log(object);
+				}, onProgress, onError );
 
 				//
 				renderer = new THREE.WebGLRenderer( { antialias: false,
