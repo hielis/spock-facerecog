@@ -4,7 +4,7 @@ from django.views.static import serve
 import re
 import base64
 import os
-#from . import recog
+from . import recog
 import subprocess
 
 def index(request, id):
@@ -38,13 +38,12 @@ def js(request, filename):
     return serve(request, os.path.basename(filepath), os.path.dirname(filepath))
 
 def upload(request):
-    print("piou")
     #print(request.POST.dict())
     dataUrlPattern = re.compile('data:image/(png|jpeg);base64,(.*)$')
     image = dataUrlPattern.match(request.POST.dict()['img']).group(2);
     Image_bin = base64.b64decode(image)
-    with open("file.png", "wb+") as fd:
+    with open("file.jpeg", "wb+") as fd:
         fd.write(Image_bin)
-        #subprocess.call("./face_landmark_detection_ex", "file.png")
+        print recog.funct("file.jpeg")
     filepath = 'mesh/mesh.jpeg'
     return serve(request, os.path.basename(filepath), os.path.dirname(filepath))
