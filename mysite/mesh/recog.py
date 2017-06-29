@@ -55,16 +55,14 @@ def funct(f):
     return l
 
 def solve_system(x_r, y_r, x_l, y_l):
-    delta_x_l = (x_l - x_0)/focal_length
-    delta_y_l = (y_l - y_0)/focal_length
-    delta_x_r = (x_r - x_0)/focal_length
-    delta_y_r = (y_r - y_0)/focal_length
-
-    b = np.array([b * delta_x_l, b * delta_y_l, b * delta_x_r])
-    a = np.array([[ (delta_x_l - 1) * math.cos(alpha), 0, (delta_x_l + 1) * math.sin(alpha)],
-                  [ (delta_y_l) * math.cos(alpha),-1, (delta_y_l) * math.sin(alpha)],
-                  [ (delta_x_r - 1) * math.cos(alpha), 0, (delta_x_r + 1) * math.sin(alpha)]])
-    return np.linealg.solve(a, b)
+	delta_x_1 = (x_r - x_0) / (2 * focal_length)
+	delta_x_2 = (x_l - x_0) / (2 * focal_length)
+	delta_y_1 = (y_r - y_0) / (2 * focal_length)
+	delta_y_2 = (y_l - y_0) / (2 * focal_length)
+	x = (b / (2 * focal_length * math.cos(alpha))) * (delta_x_1*(1 - (delta_x_1 / focal_length)) + delta_x_2*(1 - (delta_x_2 / focal_length)))
+	z = (b / (2*focal_length * math.sin(alpha))) * (delta_x_1*(1 - (delta_x_1 / focal_length)) - delta_x_2*(1 - (delta_x_2 / focal_length)))
+	y = (delta_y_1 * b / focal_length) * (1 - (1 / focal_length)*(1 / ((delta_x_1 / f) - 1)))
+	return (x, y, z) 
 
 def solve(x_r, y_r, x_l, y_l):
     x_r_p = x_l * ratio_mm_pix_x
