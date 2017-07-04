@@ -6,7 +6,8 @@ import base64
 import os
 from . import recog
 import subprocess
-
+import json
+import jsonpickle
 def index(request, id):
     filepath = ""
     if(id == "0"):
@@ -26,7 +27,7 @@ def mtl(request):
     return serve(request, os.path.basename(filepath), os.path.dirname(filepath))
 
 def obj(request):
-    filepath = 'mesh/mesh2.obj'
+    filepath = 'mesh/mesh.obj'
     return serve(request, os.path.basename(filepath), os.path.dirname(filepath))
 
 def jpeg(request):
@@ -40,10 +41,15 @@ def js(request, filename):
 def upload(request):
     #print(request.POST.dict())
     dataUrlPattern = re.compile('data:image/(png|jpeg);base64,(.*)$')
-    image = dataUrlPattern.match(request.POST.dict()['img']).group(2);
+    image = dataUrlPattern.match(request.POST.dict()['img_1']).group(2);
     Image_bin = base64.b64decode(image)
-    with open("file.jpeg", "wb+") as fd:
+    with open("file_1.jpeg", "wb+") as fd:
         fd.write(Image_bin)
-        print recog.funct("file.jpeg")
-    filepath = 'mesh/mesh.jpeg'
-    return serve(request, os.path.basename(filepath), os.path.dirname(filepath))
+    image = dataUrlPattern.match(request.POST.dict()['img_2']).group(2);
+    Image_bin = base64.b64decode(image)
+    with open("file_2.jpeg", "wb+") as fd:
+        fd.write(Image_bin)
+
+    l = recog.to_list_of_results("file_1.jpeg", "file_2.jpeg")
+    a = jsonpickle.encode(l)
+    return HttpResponse(a, content_type="application/json")
